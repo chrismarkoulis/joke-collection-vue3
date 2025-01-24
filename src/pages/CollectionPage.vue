@@ -15,7 +15,7 @@
         <option value="alpha">Sort Alphabetically</option>
       </select>
       <select v-model="filterRating" class="p-2 border rounded">
-        <option value="0">Filter by Rating</option>
+        <option value="all">All Jokes</option>
         <option v-for="n in 5" :key="n" :value="n">{{ n }} Stars</option>
       </select>
     </div>
@@ -38,19 +38,17 @@ import JokeCard from "@/components/JokeCard.vue";
 const { jokes, totalJokes, averageRating } = useJokeCollection();
 const searchQuery = ref("");
 const sortBy = ref("rating");
-const filterRating = ref(0);
+const filterRating = ref("all");
 
 const filteredJokes = computed(() => {
   return jokes.value
     .filter((j) => j.setup.toLowerCase().includes(searchQuery.value.toLowerCase()))
-    .filter((j) => (filterRating.value ? j.rating === filterRating.value : true))
+    .filter((j) => (filterRating.value === "all" ? true : j.rating === Number(filterRating.value)))
     .sort((a, b) => {
       if (sortBy.value === "alpha") {
         return a.setup.localeCompare(b.setup);
       } else {
-        const ratingA = a.rating || 0;
-        const ratingB = b.rating || 0;
-        return ratingB - ratingA;
+        return (b.rating || 0) - (a.rating || 0);
       }
     });
 });

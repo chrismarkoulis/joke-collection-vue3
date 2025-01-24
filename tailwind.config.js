@@ -1,11 +1,17 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  purge: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
+  content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
-        primary: "#1e3a8a",
-        secondary: "#d97706",
+        primary: "#3b82f6",
+        primaryHover: "#2563eb",
+        success: "#10b981",
+        successHover: "#059669",
+        danger: "#ef4444",
+        dangerHover: "#dc2626",
+        neutral: "#6b7280",
+        neutralHover: "#4b5563",
       },
     },
   },
