@@ -1,5 +1,5 @@
 <template>
-  <div class="space-x-4 p-4 bg-white shadow-md border border-gray-300 rounded-md text-center">
+  <div class="p-4 bg-white shadow-md border border-gray-300 rounded-md text-center">
     <p class="text-lg font-semibold text-gray-800">{{ joke.setup }}</p>
     <button
       v-if="!revealed"
@@ -9,6 +9,8 @@
       Reveal Punchline
     </button>
     <p v-if="revealed" class="mt-2 text-gray-600 text-lg font-medium">{{ joke.punchline }}</p>
+
+    <RatingStars v-model="rating" class="mt-4" />
 
     <button
       v-if="!isSaved"
@@ -28,16 +30,21 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from "vue";
-import type { Joke } from "@/models";
+import { ref, computed, watch } from "vue";
+import type { Joke, JokeRating } from "@/models";
 import { useJokeCollection } from "@/composables/useJokeCollection";
+import RatingStars from "./RatingStars.vue";
 
 const props = defineProps<{ joke: Joke }>();
-
-const { jokes, addJoke, removeJoke } = useJokeCollection();
+const { jokes, addJoke, removeJoke, rateJoke } = useJokeCollection();
 const revealed = ref(false);
 
 const isSaved = computed(() => jokes.value.some((j) => j.id === props.joke.id));
+const rating = ref<JokeRating>(jokes.value.find((j) => j.id === props.joke.id)?.rating || 0);
+
+watch(rating, (newRating) => {
+  if (isSaved.value) rateJoke(props.joke.id, newRating);
+});
 
 function saveJoke() {
   addJoke(props.joke);

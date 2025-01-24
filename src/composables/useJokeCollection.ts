@@ -1,13 +1,16 @@
-import { ref, watch } from "vue";
-import type { Joke } from "@/models";
+import { ref, watch, computed } from "vue";
+import type { Joke, RatedJoke, JokeRating } from "@/models";
+import { STORAGE_KEY } from "@/constants";
 
-const STORAGE_KEY = "jokeCollection";
+const jokes = ref<RatedJoke[]>(loadJokes());
 
-const jokes = ref<Joke[]>(loadJokes());
-
-function loadJokes(): Joke[] {
+function loadJokes(): RatedJoke[] {
   const saved = localStorage.getItem(STORAGE_KEY);
-  return saved ? JSON.parse(saved) : [];
+  if (saved) {
+    return JSON.parse(saved);
+  } else {
+    return [];
+  }
 }
 
 function saveJokes() {
@@ -16,7 +19,7 @@ function saveJokes() {
 
 function addJoke(joke: Joke) {
   if (!jokes.value.some((j) => j.id === joke.id)) {
-    jokes.value.push(joke);
+    jokes.value.push({ ...joke });
     saveJokes();
   }
 }
@@ -26,8 +29,25 @@ function removeJoke(jokeId: number) {
   saveJokes();
 }
 
+function rateJoke(jokeId: number, rating: JokeRating) {
+  const joke = jokes.value.find((j) => j.id === jokeId);
+  if (joke) {
+    joke.rating = Math.max(0, Math.min(rating ?? 0, 5));
+    saveJokes();
+  }
+}
+
+const totalJokes = computed(() => jokes.value.length);
+
+const averageRating = computed(() => {
+  const ratedJokes: RatedJoke[] = jokes.value.filter((j) => (j.rating ?? 0) > 0);
+  if (ratedJokes.length === 0) return 0;
+  const sum = ratedJokes.reduce((acc, j) => acc + (j.rating || 0), 0);
+  return parseFloat((sum / ratedJokes.length).toFixed(1));
+});
+
 watch(jokes, saveJokes, { deep: true });
 
 export function useJokeCollection() {
-  return { jokes, addJoke, removeJoke };
+  return { jokes, addJoke, removeJoke, rateJoke, totalJokes, averageRating };
 }
