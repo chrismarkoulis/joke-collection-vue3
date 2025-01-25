@@ -1,45 +1,70 @@
-# joke-collection
+# Joke Collection App
 
-This template should help get you started developing with Vue 3 in Vite.
+## 1. How to set up and run the project locally
 
-## Recommended IDE Setup
+To run the project locally, follow these steps:
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+1. **Clone the repository:**
 
-## Type Support for `.vue` Imports in TS
+```bash
+git clone https://github.com/chrismarkoulis/joke-collection-vue3.git
+```
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+2. **Navigate to the project directory:**
 
-## Customize configuration
+```bash
+cd joke-collection-vue3
+```
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+3. **Install dependencies:**
+   Ensure that you have Node.js and npm installed. Then, run the following command to install all necessary dependencies:
 
-## Project Setup
-
-```sh
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+4. **Start the development server:**
 
-```sh
+```bash
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+5. **Run tests:**
 
-```sh
-npm run build
+```bash
+npm test
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+## 2. Libraries & Tools Used in the Project
 
-```sh
-npm run test:unit
-```
+- **Vue 3**: A progressive JavaScript framework used for building the user interface.
+- **Vue Router**: A routing library for Vue.js used to manage page navigation.
+- **Tailwind CSS**: A utility-first CSS framework for styling the app's components.
+- **Vitest**: A testing framework used for writing unit tests for the app's components and composables.
+- **Vite**: A build tool that provides fast development server and bundling for the app.
+- **LocalStorage**: Used to persist jokes and their ratings across sessions.
 
-### Lint with [ESLint](https://eslint.org/)
+## 3. Joke collection API
 
-```sh
-npm run lint
-```
+The app fetches jokes from the following public API:
+
+- **API**: [Official Joke API](https://official-joke-api.appspot.com)
+  - **Endpoint for random jokes**: `/jokes/random`
+  - **Endpoint for programming jokes**: `/jokes/programming/random`
+
+## 4. Technical Approach
+
+The app follows a component-driven architecture with the following approach:
+
+1. **Fetching Jokes**: Jokes are fetched using the **Official Joke API**. The two primary endpoints are:
+   - **Random Joke**: A random joke can be retrieved using `/jokes/random`.
+   - **Programming Joke**: A programming-specific joke can be fetched using `/jokes/programming/random`.
+2. **State Management**: The jokes and their ratings are stored in a Vue composable (`useJokeCollection`) that interacts with the browser's `localStorage`. The state is reactive, so the UI automatically updates when a joke is added, removed, or rated.
+3. **User Interaction**: Users can rate jokes using a custom star rating component, and jokes can be saved to or removed from a personal joke collection.
+
+## 5. Data Display
+
+The app displays jokes in a user-friendly card format. Each card shows the joke's setup and includes the following features:
+
+- **Reveal Punchline**: A button that reveals the punchline of the joke with a smooth animation (using Vue transitions).
+- **Rating Stars**: Users can rate jokes on a scale of 1 to 5 stars. The rating is persisted in the local storage.
