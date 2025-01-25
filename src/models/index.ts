@@ -7,7 +7,7 @@ export interface Joke {
 }
 
 // Joke rating struct
-export type JokeRating = 0 | 1 | 2 | 3 | 4 | 5 | number | undefined;
+export type JokeRating = 1 | 2 | 3 | 4 | 5 | number;
 
 export interface RatedJoke extends Joke {
   rating?: JokeRating;

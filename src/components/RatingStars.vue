@@ -4,7 +4,7 @@
       v-for="star in MAX_RATING"
       :key="star"
       class="cursor-pointer text-2xl"
-      :class="star <= (modelValue ?? 0) ? 'text-yellow-500' : 'text-gray-400'"
+      :class="star <= (modelValue ?? 1) ? 'text-yellow-500' : 'text-gray-400'"
       @click="setRating(star)"
     >
       ★

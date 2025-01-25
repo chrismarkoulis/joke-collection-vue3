@@ -1,16 +1,16 @@
 import { ref, watch, computed } from "vue";
 import type { Joke, RatedJoke, JokeRating } from "@/models";
-import { STORAGE_KEY } from "@/constants";
+import { JOKE_COLLECTION_KEY } from "@/constants";
 
 const jokes = ref<RatedJoke[]>(loadJokes());
 
 function loadJokes(): RatedJoke[] {
-  const saved = localStorage.getItem(STORAGE_KEY);
+  const saved = localStorage.getItem(JOKE_COLLECTION_KEY);
   return saved ? JSON.parse(saved) : [];
 }
 
 function saveJokes() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(jokes.value));
+  localStorage.setItem(JOKE_COLLECTION_KEY, JSON.stringify(jokes.value));
 }
 
 function addJoke(joke: Joke) {

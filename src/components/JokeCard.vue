@@ -1,20 +1,34 @@
 <template>
-  <div class="p-4 space-x-4 bg-white shadow-md border border-gray-300 rounded-md text-center">
-    <p class="text-lg font-semibold text-gray-800">{{ joke.setup }}</p>
+  <div class="flex justify-center">
+    <div
+      class="mt-4 w-md p-4 space-x-4 bg-white shadow-md border border-gray-300 rounded-md text-center"
+    >
+      <p class="text-lg font-semibold text-gray-800">{{ joke.setup }}</p>
 
-    <Button v-if="!revealed" color="primary" class="mt-3" @click="revealed = true">
-      Reveal Punchline
-    </Button>
+      <Button v-if="!revealed" color="primary" class="mt-3" @click="revealed = true">
+        Reveal Punchline
+      </Button>
 
-    <p v-if="revealed" class="mt-2 text-gray-600 text-lg font-medium">{{ joke.punchline }}</p>
+      <transition
+        enter-active-class="transition-opacity duration-700 ease-in-out"
+        enter-from-class="opacity-0 translate-y-2"
+        enter-to-class="opacity-100 translate-y-0"
+      >
+        <p v-if="revealed" class="mt-2 text-gray-600 text-lg font-medium">
+          {{ joke.punchline }}
+        </p>
+      </transition>
 
-    <RatingStars v-if="isSaved" v-model="rating" class="mt-4" />
+      <RatingStars v-if="isSaved" v-model="rating" class="mt-4" />
 
-    <Button v-if="!isSaved" color="success" class="mt-4" @click="saveJoke">
-      Save to Collection
-    </Button>
+      <Button v-if="!isSaved" color="success" class="mt-4" @click="saveJoke">
+        Save to Collection
+      </Button>
 
-    <Button v-else color="danger" class="mt-4" @click="deleteJoke"> Remove from Collection </Button>
+      <Button v-else color="danger" class="mt-4" @click="deleteJoke">
+        Remove from Collection
+      </Button>
+    </div>
   </div>
 </template>
 
