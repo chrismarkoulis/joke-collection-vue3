@@ -8,8 +8,8 @@
 import { computed } from "vue";
 
 const props = defineProps<{
-  color?: "primary" | "success" | "danger" | "neutral";
-  size?: "small" | "medium" | "large";
+  color?: "primary" | "success" | "danger" | "neutral" | string;
+  size?: "small" | "medium" | "large" | string;
   disabled?: boolean;
 }>();
 

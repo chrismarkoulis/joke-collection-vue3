@@ -1,4 +1,4 @@
-// Joke struct
+//-- Joke struct
 export interface Joke {
   id: number;
   type: string;
@@ -6,7 +6,7 @@ export interface Joke {
   punchline: string;
 }
 
-// Joke rating struct
+//-- Joke rating struct
 export type JokeRating = 1 | 2 | 3 | 4 | 5 | number;
 
 export interface RatedJoke extends Joke {
