@@ -3,47 +3,70 @@
     <h1 class="text-3xl font-bold">Joke Discovery</h1>
     <p class="text-gray-500 mt-2">Get random jokes and enjoy!</p>
 
-    <div class="mt-4 flex justify-center space-x-4">
-      <Button color="primary" @click="loadJoke('random')">Get Random Joke</Button>
-      <Button color="neutral" @click="loadJoke('programming')">Get Programming Joke</Button>
+    <Spinner v-if="loading && jokes.length === 0" />
+    <div v-else-if="error" class="mt-6 text-red-500">{{ error }}</div>
+
+    <div class="mt-6 space-y-6">
+      <JokeCard v-for="joke in jokes" :key="joke.id" :joke="joke" />
     </div>
 
-    <Spinner v-if="loading" />
-    <div v-else-if="error" class="mt-6 text-red-500">{{ error }}</div>
-    <JokeCard v-else-if="joke" :joke="joke" class="mt-6" />
+    <div ref="loadMoreTrigger" class="h-10"></div>
+    <Spinner v-if="loading && jokes.length > 0" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { type Joke } from "@/models";
-import { fetchRandomJoke, fetchProgrammingJoke } from "@/api/jokeService";
-import { JokeCard, Spinner, Button } from "@/components";
-import { CURRENT_JOKE_KEY } from "@/constants";
+import { fetchRandomJoke } from "@/api/jokeService";
+import { JokeCard, Spinner } from "@/components";
 
-const joke = ref<Joke | null>(null);
+const jokes = ref<Joke[]>([]);
 const loading = ref(false);
 const error = ref<string | null>(null);
+const loadMoreTrigger = ref<HTMLElement | null>(null);
+let observer: IntersectionObserver | null = null;
 
-onMounted(() => {
-  const currentJoke = localStorage.getItem(CURRENT_JOKE_KEY);
-  if (currentJoke) {
-    joke.value = JSON.parse(currentJoke);
-  }
-});
-
-async function loadJoke(type: "random" | "programming") {
+async function loadJokes() {
+  if (loading.value) return;
   loading.value = true;
   error.value = null;
 
   try {
-    joke.value = type === "random" ? await fetchRandomJoke() : await fetchProgrammingJoke();
-    localStorage.setItem(CURRENT_JOKE_KEY, JSON.stringify(joke.value));
-    if (!joke.value) throw new Error("No joke found");
+    const newJokes = (
+      await Promise.all([
+        fetchRandomJoke(),
+        fetchRandomJoke(),
+        fetchRandomJoke(),
+        fetchRandomJoke(),
+        fetchRandomJoke(),
+      ])
+    ).filter((joke): joke is Joke => joke !== null);
+
+    jokes.value.push(...newJokes);
   } catch (err) {
     error.value = (err as Error).message;
   } finally {
     loading.value = false;
   }
 }
+
+onMounted(() => {
+  loadJokes();
+  observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting) {
+        loadJokes();
+      }
+    },
+    { threshold: 1.0 },
+  );
+  if (loadMoreTrigger.value) observer.observe(loadMoreTrigger.value);
+});
+
+onUnmounted(() => {
+  if (observer && loadMoreTrigger.value) {
+    observer.unobserve(loadMoreTrigger.value);
+  }
+});
 </script>
