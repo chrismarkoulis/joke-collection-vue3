@@ -18,7 +18,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import { type Joke } from "@/models";
-import { fetchRandomJoke } from "@/api/jokeService";
+import { fetchMultipleJokes } from "@/api/jokeService";
 import { JokeCard, Spinner } from "@/components";
 
 const jokes = ref<Joke[]>([]);
@@ -33,15 +33,7 @@ async function loadJokes() {
   error.value = null;
 
   try {
-    const newJokes = (
-      await Promise.all([
-        fetchRandomJoke(),
-        fetchRandomJoke(),
-        fetchRandomJoke(),
-        fetchRandomJoke(),
-        fetchRandomJoke(),
-      ])
-    ).filter((joke): joke is Joke => joke !== null);
+    const newJokes = await fetchMultipleJokes(5);
 
     jokes.value.push(...newJokes);
   } catch (err) {

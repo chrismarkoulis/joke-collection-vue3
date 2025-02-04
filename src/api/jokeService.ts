@@ -23,3 +23,17 @@ export async function fetchProgrammingJoke(): Promise<Joke | null> {
     return null;
   }
 }
+
+export async function fetchMultipleJokes(count: number = 5): Promise<Joke[]> {
+  try {
+    const responses = await Promise.all(
+      Array.from({ length: count }, () =>
+        fetch(`${API_URL}/random_joke`).then((res) => res.json()),
+      ),
+    );
+    return responses.filter((joke): joke is Joke => joke !== null);
+  } catch (error) {
+    console.error("Failed to fetch jokes:", error);
+    return [];
+  }
+}
